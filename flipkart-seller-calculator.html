@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flipkart-Seller-Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; }
+        .highlight { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Flipkart Seller Fees Calculator</h2>
+    
+    <div class="input-group">
+        <label for="productPrice">Product Price (₹)</label>
+        <input type="number" id="productPrice" required>
+    </div>
+
+    <div class="input-group">
+        <label for="category">Product Category</label>
+        <select id="category" onchange="updateCategory()">
+            <option value="">Select Category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Books">Books</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home">Home & Kitchen</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="commission">Commission Rate (%)</label>
+        <input type="number" id="commission" step="0.1" required>
+    </div>
+
+    <div class="input-group">
+        <label for="fixedFee">Fixed Closing Fee (₹)</label>
+        <input type="number" id="fixedFee" required>
+    </div>
+
+    <div class="input-group">
+        <label for="shipping">Shipping Cost (₹)</label>
+        <input type="number" id="shipping" required>
+    </div>
+
+    <button onclick="calculateFees()">Calculate Net Earnings</button>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>Calculation Breakdown:</h3>
+        <p>Commission Fee: ₹<span id="commissionFee">0.00</span></p>
+        <p>GST on Commission (18%): ₹<span id="gstCommission">0.00</span></p>
+        <p>Fixed Closing Fee: ₹<span id="fixedFeeDisplay">0.00</span></p>
+        <p>GST on Fixed Fee (18%): ₹<span id="gstFixed">0.00</span></p>
+        <p>Shipping Cost: ₹<span id="shippingCost">0.00</span></p>
+        <hr>
+        <p>Total Fees: ₹<span id="totalFees">0.00</span></p>
+        <p class="highlight">Net Earnings: ₹<span id="netEarnings">0.00</span></p>
+    </div>
+
+    <script>
+        const categoryRates = {
+            'Electronics': { commission: 14, fixedFee: 40 },
+            'Books': { commission: 6, fixedFee: 20 },
+            'Fashion': { commission: 20, fixedFee: 30 },
+            'Home': { commission: 18, fixedFee: 50 }
+        };
+
+        function updateCategory() {
+            const category = document.getElementById('category').value;
+            if (categoryRates[category]) {
+                document.getElementById('commission').value = categoryRates[category].commission;
+                document.getElementById('fixedFee').value = categoryRates[category].fixedFee;
+            }
+        }
+
+        function calculateFees() {
+            // Input values
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const commissionRate = parseFloat(document.getElementById('commission').value)/100;
+            const fixedFee = parseFloat(document.getElementById('fixedFee').value);
+            const shipping = parseFloat(document.getElementById('shipping').value);
+
+            // Calculations
+            const commission = price * commissionRate;
+            const gstCommission = commission * 0.18;
+            const gstFixed = fixedFee * 0.18;
+            const totalFees = commission + gstCommission + fixedFee + gstFixed + shipping;
+            const netEarnings = price - totalFees;
+
+            // Display results
+            document.getElementById('commissionFee').textContent = commission.toFixed(2);
+            document.getElementById('gstCommission').textContent = gstCommission.toFixed(2);
+            document.getElementById('fixedFeeDisplay').textContent = fixedFee.toFixed(2);
+            document.getElementById('gstFixed').textContent = gstFixed.toFixed(2);
+            document.getElementById('shippingCost').textContent = shipping.toFixed(2);
+            document.getElementById('totalFees').textContent = totalFees.toFixed(2);
+            document.getElementById('netEarnings').textContent = netEarnings.toFixed(2);
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
